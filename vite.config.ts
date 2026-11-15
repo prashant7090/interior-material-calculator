@@ -6,13 +6,17 @@ import path from "node:path";
 
 import siteConfiguration from "./.figma/make/site.json";
 
+const repoName = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "interior-material-calculator";
+const githubPagesBase = process.env.VITE_BASE_PATH ?? `/${repoName}/`;
+const isGitHubPagesBuild = process.env.GITHUB_ACTIONS === "true" || process.env.GITHUB_PAGES === "true";
+
 // Vite config — https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // .figma/make/deploy-preview passes `--mode development` for cached-preview builds.
   const emitSourcemaps = mode === "development";
 
   return {
-    base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : "./",
+    base: isGitHubPagesBuild ? githubPagesBase : "./",
     build: {
       sourcemap: emitSourcemaps ? "inline" : false,
       minify: !emitSourcemaps,
